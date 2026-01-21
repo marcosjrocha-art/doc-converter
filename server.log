@@ -65,3 +65,4 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET /api/stats 200 in 284ms
  GET /api/stats 200 in 278ms
  GET /api/stats 200 in 272ms
+ GET /api/stats 200 in 277ms
