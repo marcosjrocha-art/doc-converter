@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Conversion model - Stores history of all document conversions
+model Conversion {
+  id            String   @id @default(cuid())
+  originalFileName String
+  originalFileSize Int
+  fromFormat    String
+  toFormat      String
+  status        String   @default("pending")
+  errorMessage  String?
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+  ipAddress     String?
+  userAgent     String?
+  
+  @@index([createdAt])
+  @@index([status])
+  @@index([fromFormat])
+  @@index([toFormat])
+}
+
+// ConversionStats model - Aggregated statistics for analytics
+model ConversionStats {
+  id            String   @id @default(cuid())
+  date          DateTime @unique
+  totalConversions Int    @default(0)
+  successfulConversions Int @default(0)
+  failedConversions Int   @default(0)
+  totalDataProcessed Int  @default(0)
+  pdfToDocx     Int      @default(0)
+  docxToPdf     Int      @default(0)
+  otherFormats  Int      @default(0)
+  
+  @@index([date])
+}

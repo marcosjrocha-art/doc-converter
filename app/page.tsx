@@ -1,12 +1,13 @@
 import { Header } from '@/components/Header'
 import { ConverterSection } from '@/components/ConverterSection'
 import { FeaturesSection } from '@/components/FeaturesSection'
+import { StatsSection } from '@/components/StatsSection'
 import { FAQSection } from '@/components/FAQSection'
 import { Footer } from '@/components/Footer'
 
 /**
  * Home page - Main landing page for DocConvert
- * Displays header, converter tool, features, FAQ, and footer
+ * Displays header, converter tool, features, stats, FAQ, and footer
  */
 export default function Home() {
   return (
@@ -16,13 +17,13 @@ export default function Home() {
       {/* Hero Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-blue-50 to-white">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700">
             Converta Documentos
             <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Instantaneamente
             </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
             Transforme PDF em DOCX, DOCX em PDF, e muito mais. Rápido, seguro e completamente gratuito.
           </p>
         </div>
@@ -30,6 +31,9 @@ export default function Home() {
 
       {/* Converter Section */}
       <ConverterSection />
+
+      {/* Stats Section */}
+      <StatsSection />
 
       {/* Features Section */}
       <FeaturesSection />
@@ -48,7 +52,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Step 1 */}
-            <div className="text-center">
+            <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-2xl font-bold mx-auto mb-4">
                 1
               </div>
@@ -61,7 +65,7 @@ export default function Home() {
             </div>
 
             {/* Step 2 */}
-            <div className="text-center">
+            <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
               <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-2xl font-bold mx-auto mb-4">
                 2
               </div>
@@ -74,7 +78,7 @@ export default function Home() {
             </div>
 
             {/* Step 3 */}
-            <div className="text-center">
+            <div className="text-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
               <div className="flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 text-white text-2xl font-bold mx-auto mb-4">
                 3
               </div>
