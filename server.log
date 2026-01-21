@@ -49,3 +49,18 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET /api/stats 200 in 285ms
  ⚠ metadataBase property in metadata export is not set for resolving social open graph or twitter images, using "http://localhost:3000". See https://nextjs.org/docs/app/api-reference/functions/generate-metadata#metadatabase
  GET / 200 in 212ms
+ GET /api/stats 200 in 294ms
+ GET /api/stats 200 in 318ms
+ GET /api/stats 200 in 279ms
+ GET /api/stats 200 in 273ms
+ GET /api/stats 200 in 277ms
+ GET /api/stats 200 in 282ms
+ GET /api/stats 200 in 274ms
+ GET /api/stats 200 in 292ms
+ GET /api/stats 200 in 296ms
+ GET /api/stats 200 in 305ms
+ GET /api/stats 200 in 575ms
+ GET /api/stats 200 in 283ms
+ GET /api/stats 200 in 310ms
+ GET /api/stats 200 in 284ms
+ GET /api/stats 200 in 278ms
