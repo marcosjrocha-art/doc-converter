@@ -204,3 +204,17 @@ ConvertAPI key not configured. Using mock conversion.
  GET /api/stats 200 in 301ms
  GET / 200 in 288ms
  GET /api/stats 200 in 290ms
+ GET /api/stats 200 in 323ms
+ GET /api/stats 200 in 289ms
+ GET /api/stats 200 in 275ms
+ GET /api/stats 200 in 287ms
+ GET /api/stats 200 in 285ms
+ GET /api/stats 200 in 276ms
+ GET /api/stats 200 in 274ms
+ GET /api/stats 200 in 280ms
+ GET /api/stats 200 in 294ms
+ GET /api/stats 200 in 358ms
+ GET /api/stats 200 in 542ms
+ GET /api/stats 200 in 304ms
+ ✓ Compiled in 145ms
+ GET /api/stats 200 in 289ms

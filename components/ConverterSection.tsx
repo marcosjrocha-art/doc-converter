@@ -7,21 +7,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Upload, Download, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 
+interface FileState {
+  file: File | null
+  fromFormat: string
+  toFormat: string
+  isConverting: boolean
+  progress: number
+}
+
 /**
  * ConverterSection - Main file conversion interface
  * Handles file upload, format selection, and conversion process
  * Supports multiple conversion types: PDF↔DOCX, PDF→Images, etc.
  */
 export function ConverterSection() {
-  const [file, setFile] = useState<File | null>(null)
-  const [fromFormat, setFromFormat] = useState('pdf')
-  const [toFormat, setToFormat] = useState('docx')
-  const [isConverting, setIsConverting] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [state, setState] = useState<FileState>({
+    file: null,
+    fromFormat: 'pdf',
+    toFormat: 'docx',
+    isConverting: false,
+    progress: 0,
+  })
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Available conversion formats
-  const formats = {
+  const formats: Record<string, string> = {
     pdf: 'PDF',
     docx: 'DOCX',
     doc: 'DOC',
@@ -31,7 +41,7 @@ export function ConverterSection() {
   }
 
   // Determine which formats are available based on source format
-  const getAvailableTargetFormats = () => {
+  const getAvailableTargetFormats = (): string[] => {
     const conversions: Record<string, string[]> = {
       pdf: ['docx', 'doc', 'txt', 'jpg', 'png'],
       docx: ['pdf', 'doc', 'txt'],
@@ -40,7 +50,7 @@ export function ConverterSection() {
       jpg: ['pdf'],
       png: ['pdf'],
     }
-    return conversions[fromFormat] || []
+    return conversions[state.fromFormat] || []
   }
 
   // Handle file selection
@@ -52,7 +62,7 @@ export function ConverterSection() {
         toast.error('Arquivo muito grande. Máximo 50MB.')
         return
       }
-      setFile(selectedFile)
+      setState(prev => ({ ...prev, file: selectedFile }))
       toast.success(`Arquivo selecionado: ${selectedFile.name}`)
     }
   }
@@ -77,33 +87,32 @@ export function ConverterSection() {
         const dataTransfer = new DataTransfer()
         dataTransfer.items.add(droppedFile)
         input.files = dataTransfer.files
-        handleFileSelect({ target: input } as any)
+        handleFileSelect({ target: input } as React.ChangeEvent<HTMLInputElement>)
       }
     }
   }
 
   // Handle conversion process
   const handleConvert = async () => {
-    if (!file) {
+    if (!state.file) {
       toast.error('Por favor, selecione um arquivo.')
       return
     }
 
-    setIsConverting(true)
-    setProgress(0)
+    setState(prev => ({ ...prev, isConverting: true, progress: 0 }))
 
     try {
       // Create FormData for file upload
       const formData = new FormData()
-      formData.append('file', file)
-      formData.append('fromFormat', fromFormat)
-      formData.append('toFormat', toFormat)
+      formData.append('file', state.file)
+      formData.append('fromFormat', state.fromFormat)
+      formData.append('toFormat', state.toFormat)
 
       // Simulate progress updates
       const progressInterval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 90) return prev
-          return prev + Math.random() * 30
+        setState(prev => {
+          if (prev.progress >= 90) return prev
+          return { ...prev, progress: prev.progress + Math.random() * 30 }
         })
       }, 300)
 
@@ -114,7 +123,7 @@ export function ConverterSection() {
       })
 
       clearInterval(progressInterval)
-      setProgress(100)
+      setState(prev => ({ ...prev, progress: 100 }))
 
       if (!response.ok) {
         const error = await response.json()
@@ -126,30 +135,28 @@ export function ConverterSection() {
       const url = window.URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = `${file.name.split('.')[0]}.${toFormat}`
+      a.download = `${state.file.name.split('.')[0]}.${state.toFormat}`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
       document.body.removeChild(a)
 
       toast.success('Conversão concluída com sucesso!')
-      setFile(null)
-      setProgress(0)
+      setState(prev => ({ ...prev, file: null, progress: 0 }))
     } catch (error) {
       console.error('Conversion error:', error)
       toast.error(
         error instanceof Error ? error.message : 'Erro ao converter arquivo'
       )
-      setProgress(0)
+      setState(prev => ({ ...prev, progress: 0 }))
     } finally {
-      setIsConverting(false)
+      setState(prev => ({ ...prev, isConverting: false }))
     }
   }
 
   // Reset form
   const handleReset = () => {
-    setFile(null)
-    setProgress(0)
+    setState(prev => ({ ...prev, file: null, progress: 0 }))
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -187,7 +194,7 @@ export function ConverterSection() {
             />
             <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-lg font-semibold text-gray-900 mb-2">
-              {file ? file.name : 'Arraste seu arquivo aqui'}
+              {state.file ? state.file.name : 'Arraste seu arquivo aqui'}
             </p>
             <p className="text-sm text-gray-500">
               ou clique para selecionar (máx. 50MB)
@@ -201,7 +208,7 @@ export function ConverterSection() {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 De:
               </label>
-              <Select value={fromFormat} onValueChange={setFromFormat}>
+              <Select value={state.fromFormat} onValueChange={(value) => setState(prev => ({ ...prev, fromFormat: value }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -226,8 +233,8 @@ export function ConverterSection() {
                 Para:
               </label>
               <Select
-                value={toFormat}
-                onValueChange={setToFormat}
+                value={state.toFormat}
+                onValueChange={(value) => setState(prev => ({ ...prev, toFormat: value }))}
                 disabled={availableTargets.length === 0}
               >
                 <SelectTrigger>
@@ -236,7 +243,7 @@ export function ConverterSection() {
                 <SelectContent>
                   {availableTargets.map((format) => (
                     <SelectItem key={format} value={format}>
-                      {formats[format as keyof typeof formats]}
+                      {formats[format]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -245,16 +252,16 @@ export function ConverterSection() {
           </div>
 
           {/* Progress Bar */}
-          {progress > 0 && progress < 100 && (
+          {state.progress > 0 && state.progress < 100 && (
             <div className="mb-6">
               <div className="w-full bg-gray-200 rounded-full h-2">
                 <div
                   className="bg-gradient-to-r from-blue-600 to-purple-600 h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${progress}%` }}
+                  style={{ width: `${state.progress}%` }}
                 />
               </div>
               <p className="text-sm text-gray-600 mt-2 text-center">
-                Convertendo... {Math.round(progress)}%
+                Convertendo... {Math.round(state.progress)}%
               </p>
             </div>
           )}
@@ -263,10 +270,10 @@ export function ConverterSection() {
           <div className="flex gap-4">
             <Button
               onClick={handleConvert}
-              disabled={!file || isConverting || availableTargets.length === 0}
+              disabled={!state.file || state.isConverting || availableTargets.length === 0}
               className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white h-12 text-base"
             >
-              {isConverting ? (
+              {state.isConverting ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                   Convertendo...
@@ -278,12 +285,12 @@ export function ConverterSection() {
                 </>
               )}
             </Button>
-            {file && (
+            {state.file && (
               <Button
                 onClick={handleReset}
                 variant="outline"
                 className="px-6"
-                disabled={isConverting}
+                disabled={state.isConverting}
               >
                 Limpar
               </Button>

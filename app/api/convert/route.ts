@@ -5,6 +5,20 @@ import { existsSync, mkdirSync } from 'fs'
 import { prisma } from '@/lib/db'
 import axios from 'axios'
 
+interface ConversionRecord {
+  id: string
+  originalFileName: string
+  originalFileSize: number
+  fromFormat: string
+  toFormat: string
+  status: string
+  errorMessage: string | null
+  createdAt: Date
+  completedAt: Date | null
+  ipAddress: string | null
+  userAgent: string | null
+}
+
 /**
  * POST /api/convert
  * Handles document conversion requests using ConvertAPI
@@ -19,7 +33,7 @@ import axios from 'axios'
  * - Error message if conversion fails
  */
 export async function POST(request: NextRequest) {
-  let conversionRecord: any = null
+  let conversionRecord: ConversionRecord | null = null
   
   try {
     // Parse FormData from request
@@ -62,7 +76,7 @@ export async function POST(request: NextRequest) {
         ipAddress: request.headers.get('x-forwarded-for') || 'unknown',
         userAgent: request.headers.get('user-agent') || 'unknown',
       },
-    })
+    }) as ConversionRecord
 
     // Convert file to buffer
     const bytes = await file.arrayBuffer()
